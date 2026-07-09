@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+ <title>CluePilot AI - 智能线索推理助手</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="app">
+    <header>
+    <h1>🕵️ CluePilot AI</h1>
+      <p>一个模拟 AI Agent 推理流程的智能线索推理小游戏</p>
+    </header>
+
+    <section class="case-card">
+      <div class="case-header">
+        <h2 id="caseTitle">案件加载中...</h2>
+        <button onclick="loadRandomCase()">随机案件</button>
+      </div>
+
+      <p id="caseDesc"></p>
+    </section>
+
+    <section class="grid">
+      <div class="panel">
+        <h3>嫌疑人</h3>
+        <div id="suspectList"></div>
+      </div>
+
+      <div class="panel">
+        <h3>关键线索</h3>
+        <ul id="clueList"></ul>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h3>请选择你认为的嫌疑人</h3>
+      <select id="answerSelect"></select>
+      <button class="main-btn" onclick="checkAnswer()">提交判断</button>
+    </section>
+
+    <section class="result" id="resultBox">
+      <h3>AI 推理结果</h3>
+      <p>请选择嫌疑人后，系统会生成推理分析。</p>
+    </section>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
