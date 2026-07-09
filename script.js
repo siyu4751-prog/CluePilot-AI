@@ -1,6 +1,7 @@
 const cases = [
   {
     title: "图书馆失窃案",
+    difficulty: "中等",
     desc: "学校图书馆夜间丢失了一台笔记本电脑。案发时间为晚上 9 点到 10 点之间，现场没有明显破坏痕迹。",
     suspects: [
       {
@@ -23,10 +24,16 @@ const cases = [
       "学生A离开时背包很轻，清洁员C进入时手中只有清洁工具。"
     ],
     answer: "管理员B",
-    reason: "本案关键在于现场没有破坏痕迹，说明嫌疑人很可能拥有正常进入权限。管理员B掌握备用钥匙，并且监控显示其在案发时段重新进入图书馆，因此嫌疑最大。"
+    reason: "本案关键在于现场没有破坏痕迹，说明嫌疑人很可能拥有正常进入权限。管理员B掌握备用钥匙，并且监控显示其在案发时段重新进入图书馆，因此嫌疑最大。",
+    scores: {
+      clue: 92,
+      timeline: 88,
+      suspicion: "高"
+    }
   },
   {
     title: "实验室数据删除案",
+    difficulty: "困难",
     desc: "计算机实验室中，一个小组项目的重要代码文件被删除。删除时间为下午 5 点 10 分左右。",
     suspects: [
       {
@@ -49,10 +56,16 @@ const cases = [
       "组员A离开时间早于删除时间，组员C到达时间晚于删除时间。"
     ],
     answer: "组员B",
-    reason: "删除时间与组员B账号登录时间高度吻合，且删除后回收站被清空，说明行为具有明显目的性。其他两人时间线不匹配，因此组员B嫌疑最大。"
+    reason: "删除时间与组员B账号登录时间高度吻合，且删除后回收站被清空，说明行为具有明显目的性。其他两人时间线不匹配，因此组员B嫌疑最大。",
+    scores: {
+      clue: 95,
+      timeline: 93,
+      suspicion: "高"
+    }
   },
   {
     title: "社团经费遗失案",
+    difficulty: "简单",
     desc: "学生社团活动结束后，装有活动经费的信封不见了。信封原本放在会议室桌子抽屉中。",
     suspects: [
       {
@@ -75,10 +88,16 @@ const cases = [
       "成员C离开后出现在宿舍门禁记录中。"
     ],
     answer: "干事B",
-    reason: "干事B在关键时间段独自返回会议室，并具备接触信封的机会。其他人虽然可能知道经费位置，但时间线或行动轨迹不符合，因此干事B最可疑。"
+    reason: "干事B在关键时间段独自返回会议室，并具备接触信封的机会。其他人虽然可能知道经费位置，但时间线或行动轨迹不符合，因此干事B最可疑。",
+    scores: {
+      clue: 87,
+      timeline: 90,
+      suspicion: "中高"
+    }
   },
   {
     title: "咖啡店手机调包案",
+    difficulty: "中等",
     desc: "一家咖啡店内，一名顾客发现自己的手机被调包。案发时，桌边曾有三个人短暂靠近。",
     suspects: [
       {
@@ -101,10 +120,14 @@ const cases = [
       "外卖员C始终没有靠近失主桌面。"
     ],
     answer: "顾客A",
-    reason: "顾客A有接近手机的机会，并且离开时手中出现与案件相关的手机壳。服务员B虽然接触桌面，但时间点已经在手机消失之后，外卖员C也没有靠近桌面，因此顾客A嫌疑最大。"
+    reason: "顾客A有接近手机的机会，并且离开时手中出现与案件相关的手机壳。服务员B虽然接触桌面，但时间点已经在手机消失之后，外卖员C也没有靠近桌面，因此顾客A嫌疑最大。",
+    scores: {
+      clue: 89,
+      timeline: 86,
+      suspicion: "高"
+    }
   }
 ];
-
 let currentCase = null;
 
 function loadRandomCase() {
@@ -112,8 +135,13 @@ function loadRandomCase() {
   currentCase = cases[randomIndex];
 
   document.getElementById("caseTitle").innerText = currentCase.title;
-  document.getElementById("caseDesc").innerText = currentCase.desc;
-
+document.getElementById("caseDesc").innerHTML = `
+  ${currentCase.desc}
+  <div class="case-meta">
+    <span class="badge">案件难度：${currentCase.difficulty}</span>
+    <span class="badge">AI 推理模式：规则推理</span>
+  </div>
+`;
   const suspectList = document.getElementById("suspectList");
   suspectList.innerHTML = "";
 
@@ -160,12 +188,20 @@ function checkAnswer() {
 
   const userAnswer = document.getElementById("answerSelect").value;
   const resultBox = document.getElementById("resultBox");
+  const isCorrect = userAnswer === currentCase.answer;
 
-  if (userAnswer === currentCase.answer) {
+  if (isCorrect) {
     resultBox.innerHTML = `
       <h3>AI 推理结果</h3>
       <p class="correct">判断正确！你找到了最可疑的人物：${currentCase.answer}</p>
       <p><strong>推理分析：</strong>${currentCase.reason}</p>
+
+      <div class="score-box">
+        <p><strong>线索匹配度：</strong>${currentCase.scores.clue}%</p>
+        <p><strong>时间线吻合度：</strong>${currentCase.scores.timeline}%</p>
+        <p><strong>嫌疑程度：</strong>${currentCase.scores.suspicion}</p>
+      </div>
+
       <p><strong>Agent 流程：</strong>系统先读取案件背景，再分析人物时间线与关键证据，最后根据线索匹配度生成判断结果。</p>
     `;
   } else {
@@ -174,9 +210,64 @@ function checkAnswer() {
       <p class="wrong">判断错误。你选择的是：${userAnswer}</p>
       <p><strong>正确嫌疑人：</strong>${currentCase.answer}</p>
       <p><strong>推理分析：</strong>${currentCase.reason}</p>
+
+      <div class="score-box">
+        <p><strong>线索匹配度：</strong>${currentCase.scores.clue}%</p>
+        <p><strong>时间线吻合度：</strong>${currentCase.scores.timeline}%</p>
+        <p><strong>嫌疑程度：</strong>${currentCase.scores.suspicion}</p>
+      </div>
+
       <p><strong>改进建议：</strong>推理时优先关注时间线、行动机会和关键证据是否相互吻合。</p>
     `;
   }
+
+  saveHistory(currentCase.title, userAnswer, currentCase.answer, isCorrect);
+  renderHistory();
+}
+function saveHistory(caseTitle, userAnswer, correctAnswer, isCorrect) {
+  let history = JSON.parse(localStorage.getItem("clueHistory")) || [];
+
+  const record = {
+    caseTitle,
+    userAnswer,
+    correctAnswer,
+    isCorrect,
+    time: new Date().toLocaleString()
+  };
+
+  history.unshift(record);
+  history = history.slice(0, 5);
+
+  localStorage.setItem("clueHistory", JSON.stringify(history));
 }
 
-window.onload = loadRandomCase;
+function renderHistory() {
+  const historyList = document.getElementById("historyList");
+  const history = JSON.parse(localStorage.getItem("clueHistory")) || [];
+
+  if (history.length === 0) {
+    historyList.innerHTML = `<p class="empty">暂无历史记录</p>`;
+    return;
+  }
+
+  historyList.innerHTML = "";
+
+  history.forEach((item) => {
+    const div = document.createElement("div");
+    div.className = "history-item";
+    div.innerHTML = `
+      <p><strong>${item.caseTitle}</strong></p>
+      <p>你的选择：${item.userAnswer} ｜ 正确答案：${item.correctAnswer}</p>
+      <p>${item.isCorrect ? "判断正确" : "判断错误"} ｜ ${item.time}</p>
+    `;
+    historyList.appendChild(div);
+  });
+}
+
+function clearHistory() {
+  localStorage.removeItem("clueHistory");
+  renderHistory();
+}window.onload = function () {
+  loadRandomCase();
+  renderHistory();
+};
